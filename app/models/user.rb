@@ -1,2 +1,3 @@
 class User < ApplicationRecord
-cccend
+  belongs_to :library, class_name: 'Library', foreign_key: library_id
+end

@@ -5,7 +5,7 @@
             "server": "localhost",
             "port": 5432,
             "driver": "PostgreSQL",
-            "name": "LiteraGestApi",
+            "name": "litera_gest_api_development",
             "database": "litera_gest_api_development",
             "username": "postgres"
         }
