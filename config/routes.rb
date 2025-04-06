@@ -3,5 +3,6 @@ Rails.application.routes.draw do
 
   resources :type_users
   resources :users
+  resources :libraries
 
 end
