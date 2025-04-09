@@ -1,7 +1,5 @@
 class TypeUsersController < ApplicationController
 
-  skip_before_action :verify_authenticity_token, only: [:create, :update, :destroy]
-
   def index
     @type_users = TypeUser.all
     render json: @type_users

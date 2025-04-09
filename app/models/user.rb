@@ -1,3 +1,4 @@
 class User < ApplicationRecord
-  belongs_to :library, class_name: 'Library', foreign_key: library_id
+  has_secure_password
+  belongs_to :library
 end
