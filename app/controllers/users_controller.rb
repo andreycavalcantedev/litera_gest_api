@@ -14,6 +14,13 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(users_params)
+
+    email = User.find_by(email: users_params[:email])
+    if email
+      render json: {Error: 'eamil already existy'}, status: :conflict
+      return
+    end
+
     if @user.save!
       render json: @user
     else
@@ -39,7 +46,7 @@ class UsersController < ApplicationController
 
   def users_params
     params.require(:user).permit(
-      :id, :name, :email, :cpf, :card_identity, :type_user_id, :library_id, :password, 
+      :id, :name, :email, :cpf, :card_identity, :type_user_id, :library_id, :password, :password_confirmation 
     )
   end
 end
