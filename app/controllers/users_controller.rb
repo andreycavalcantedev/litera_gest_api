@@ -1,19 +1,19 @@
 class UsersController < ApplicationController
 
   skip_before_action :authenticate_request, only: [:create]
+  before_action :find_users, only: [:index]
+  before_action :find_entity, except: [:index, :create]
 
   def index
-    @users = User.all
-    render json: @users
+    render json: @library_users
   end
 
   def show
-    @user = User.find(params[:id])
     render json: @user
   end
 
   def create
-    @user = User.new(users_params)
+    @user = User.new(users_params.except(:type_user_id))
 
     email = User.find_by(email: users_params[:email])
     if email
@@ -21,15 +21,20 @@ class UsersController < ApplicationController
       return
     end
 
-    if @user.save!
-      render json: @user
+    if @current_user&.type_user_id == 1
+      @user.type_user_id = users_params[:type_user_id]
     else
-      render json: @user.errors, status: :unprocessable_entity
+      @user.type_user_id = 3
+    end
+
+    if @user.save
+      render json: @user, status: :created
+    else
+      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def update
-    @user = User.find(params[:id])
     if @user.update!(users_params)
       render json: @user
     else
@@ -38,11 +43,18 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user = User.find(params[:id])
     @user.destroy
   end
 
   private
+
+  def find_users
+    @library_users = User.by_library(@current_library['id'])
+  end
+
+  def find_entity
+    @user = User.find(params[:id])
+  end
 
   def users_params
     params.require(:user).permit(
