@@ -6,6 +6,8 @@ gem 'jwt'
 
 gem 'bcrypt', '~> 3.1.7'
 
+gem 'cpf_cnpj'
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.4"
 
