@@ -17,7 +17,7 @@ class UsersController < ApplicationController
 
     email = User.find_by(email: users_params[:email])
     if email
-      render json: {Error: 'eamil already existy'}, status: :conflict
+      render json: { error: 'eamil already existy' }, status: :conflict
       return
     end
 
@@ -35,6 +35,13 @@ class UsersController < ApplicationController
   end
 
   def update
+
+    user_update = User.find_by(id: users_params[:id])
+    if @current_user.type_user_id != 1 && user_update&.type_user_id != users_params[:type_user_id]
+      render json: { error: 'unpermitted action' }, status: :forbidden
+      return
+    end
+
     if @user.update!(users_params)
       render json: @user
     else
