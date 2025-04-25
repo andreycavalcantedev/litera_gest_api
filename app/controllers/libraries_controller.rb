@@ -1,21 +1,23 @@
 class LibrariesController < ApplicationController
 
+  skip_before_action :authenticate_request, only: [:index, :show]
+  before_action :find_entity, except: [:index, :create]
+
   def index
     @libraries = Library.all
     render json: @libraries 
   end
 
   def  show
-    @library = Library.find(libraries_params[:id])
     render  json: @library
   end
 
   def create
-    @library = Library.new(libraries_params)
-    if @library.save
-      render json: @library
+    @new_library = Library.new(libraries_params)
+    if @new_library.save
+      render json: @new_library
     else
-      render json: @library.errors, status: :unprocessable_entity
+      render json: @new_library.errors, status: :unprocessable_entity
     end
   end
 
@@ -34,6 +36,10 @@ class LibrariesController < ApplicationController
   end
 
   private
+
+  def find_entity
+    @library = Library.find(params[:id])
+  end
 
   def libraries_params
     params.require(:library).permit(

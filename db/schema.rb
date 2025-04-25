@@ -10,18 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_20_094857) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_25_064924) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "black_listed_tokens", force: :cascade do |t|
+    t.string "token", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "libraries", force: :cascade do |t|
     t.string "name"
-    t.integer "phone"
-    t.integer "whatsapp"
+    t.string "phone"
+    t.string "whatsapp"
     t.string "email"
     t.time "opening_time"
     t.time "closing_time"
-    t.integer "cnpj"
+    t.string "cnpj"
     t.string "instagram"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

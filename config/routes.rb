@@ -6,4 +6,5 @@ Rails.application.routes.draw do
   resources :libraries
 
   post '/login', to: 'auth#login'
+  delete '/logout', to: 'auth#logout'
 end
