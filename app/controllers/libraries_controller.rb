@@ -13,11 +13,24 @@ class LibrariesController < ApplicationController
   end
 
   def create
-    @new_library = Library.new(libraries_params)
-    if @new_library.save
-      render json: @new_library
+    if @current_user.type_user_id = 1
+      @new_library = Library.new(libraries_params)
+
+      email = Library.find_by(email: libraries_params[:email])
+      cnpj = Library.find_by(cnpj: libraries_params[:cnpj])
+      phone = Library.find_by(phone: libraries_params[:phone])
+      whatsapp = Library.find_by(whatsapp: libraries_params[:whatsapp])
+      if email || cnpj || phone || whatsapp
+        return render json: { error: 'informations already existy' }, status: :conflict
+      end
+  
+      if @new_library.save!
+        render json: @new_library
+      else
+        render json: @new_library.errors, status: :unprocessable_entity
+      end
     else
-      render json: @new_library.errors, status: :unprocessable_entity
+      return render json: { error: 'user unauthorized action' }, status: :unauthorized
     end
   end
 
