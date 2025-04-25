@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    render json: @user
+    render json: @user.as_json(include: :library )
   end
 
   def create
