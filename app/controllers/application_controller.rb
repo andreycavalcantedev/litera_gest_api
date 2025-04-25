@@ -19,7 +19,11 @@ class ApplicationController < ActionController::API
 
     if decoded
       @current_user = User.find_by(id: decoded[:user_id])
-      @current_library = Library.find_by(id: params[:user][:library_id])
+      @current_library = Library.find_by(id: @current_user.library_id)
+    end
+
+    if BlackListedToken.exists?(token: header)
+      return render json: { errors: 'Token Invàlido' }, status: :unauthorized
     end
 
     render json: { error: 'Não autorizado' }, status: :unauthorized unless  @current_user
