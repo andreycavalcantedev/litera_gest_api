@@ -10,12 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_25_064924) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_12_182502) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "black_listed_tokens", force: :cascade do |t|
     t.string "token", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "books", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.string "year_published"
+    t.string "gender"
+    t.string "isbn"
+    t.integer "total_quantity"
+    t.integer "quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
