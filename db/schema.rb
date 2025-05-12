@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_05_12_182502) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_12_184724) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,6 +18,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_12_182502) do
     t.string "token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "book_users", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "date_reservation"
+    t.datetime "date_devolution"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_book_users_on_book_id"
+    t.index ["user_id"], name: "index_book_users_on_user_id"
   end
 
   create_table "books", force: :cascade do |t|
@@ -65,6 +76,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_12_182502) do
     t.index ["type_user_id"], name: "index_users_on_type_user_id"
   end
 
+  add_foreign_key "book_users", "books"
+  add_foreign_key "book_users", "users"
   add_foreign_key "users", "libraries"
   add_foreign_key "users", "type_users"
 end
