@@ -10,9 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_05_12_184724) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_23_192242) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "addresses", force: :cascade do |t|
+    t.string "country", null: false
+    t.string "state", null: false
+    t.string "city", null: false
+    t.string "zipcode", null: false
+    t.string "district", null: false
+    t.string "street", null: false
+    t.string "number", null: false
+    t.string "complement"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "authors", force: :cascade do |t|
+    t.string "name"
+    t.date "birthdate"
+    t.date "death_date"
+    t.string "url_image"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "black_listed_tokens", force: :cascade do |t|
     t.string "token", null: false
@@ -41,6 +63,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_12_184724) do
     t.integer "quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "author_id"
+    t.bigint "publisher_id"
+    t.index ["author_id"], name: "index_books_on_author_id"
+    t.index ["publisher_id"], name: "index_books_on_publisher_id"
   end
 
   create_table "libraries", force: :cascade do |t|
@@ -52,6 +78,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_12_184724) do
     t.time "closing_time"
     t.string "cnpj"
     t.string "instagram"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "address_id"
+    t.index ["address_id"], name: "index_libraries_on_address_id"
+  end
+
+  create_table "publishers", force: :cascade do |t|
+    t.string "name"
+    t.string "cnpj"
+    t.string "phone"
+    t.string "email"
+    t.string "url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -72,12 +110,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_12_184724) do
     t.datetime "updated_at", null: false
     t.bigint "library_id"
     t.string "password_digest"
+    t.bigint "address_id"
+    t.index ["address_id"], name: "index_users_on_address_id"
     t.index ["library_id"], name: "index_users_on_library_id"
     t.index ["type_user_id"], name: "index_users_on_type_user_id"
   end
 
   add_foreign_key "book_users", "books"
   add_foreign_key "book_users", "users"
+  add_foreign_key "books", "authors"
+  add_foreign_key "books", "publishers"
+  add_foreign_key "libraries", "addresses"
+  add_foreign_key "users", "addresses"
   add_foreign_key "users", "libraries"
   add_foreign_key "users", "type_users"
 end
