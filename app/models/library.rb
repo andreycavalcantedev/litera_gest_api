@@ -2,6 +2,9 @@ require 'cpf_cnpj'
 
 class Library < ApplicationRecord
   has_many :users
+
+  has_one :address
+
   before_save :cnpj_formatted
 
   validate :valid_cnpj
