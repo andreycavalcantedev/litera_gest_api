@@ -10,6 +10,8 @@ class User < ApplicationRecord
   before_save :cpf_formated
   validate :valid_cpf
 
+  has_many :addresses
+
   belongs_to :library
 
   scope :by_library, ->(library_id) { where(library_id: library_id) }
