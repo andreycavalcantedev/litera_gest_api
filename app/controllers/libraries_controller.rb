@@ -14,6 +14,7 @@ class LibrariesController < ApplicationController
   end
 
   def create
+
     @new_library = Library.new(libraries_params)
 
     email = Library.find_by(email: libraries_params[:email])
@@ -25,6 +26,10 @@ class LibrariesController < ApplicationController
     end
 
     if @new_library.save!
+
+      administrator_user = User.find(@current_user.id)
+      administrator_user.update!({ library_id: @new_library.id })
+
       render json: @new_library
     else
       render json: @new_library.errors, status: :unprocessable_entity
