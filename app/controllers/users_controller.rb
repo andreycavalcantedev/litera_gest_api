@@ -49,17 +49,38 @@ class UsersController < ApplicationController
   end
 
   def update
-
     user_update = User.find_by(id: users_params[:id])
-    if @current_user.type_user_id != 1 && user_update&.type_user_id != users_params[:type_user_id]
+    if @current_user.type_user_id != 1 && user_update&.type_user_id != @current_user.type_user_id
       render json: { error: 'unpermitted action' }, status: :forbidden
       return
     end
 
-    if @user.update!(users_params)
-      render json: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
+    begin
+      ActiveRecord::Base.transaction do
+        @user.update!(users_params.except(:address))
+
+        unless @user.type_user_id = 3 
+          address = users_params[:address]
+          @user.address.update!({
+                                  country: address[:country],
+                                  state: address[:state],
+                                  city: address[:city],
+                                  zipcod: address[:zipcode],
+                                  district: address[:district],
+                                  street: address[:street],
+                                  number: address[:number],
+                                  complement: address[:complement]
+                              })
+        end
+      end
+
+      if @user.type_user_id != 3
+        render json: @user.as_json(include: :address), status: :ok
+      else
+        render json: @user, staus: :ok
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      render json: { error: e.message }, status: :unprocessable_entity
     end
   end
 

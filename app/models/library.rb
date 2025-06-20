@@ -4,10 +4,10 @@ class Library < ApplicationRecord
   has_many :users
 
   has_one :address
+                                                                                                                             
+  before_save :cnpj_formatted                                                                                                                                                                                                               
 
-  before_save :cnpj_formatted
-
-  validate :valid_cnpj
+  validate :valid_cnpj                                                                                                                                                                                                                                                                                                                                         
 
   private
 
@@ -21,3 +21,4 @@ class Library < ApplicationRecord
     self.cnpj = CNPJ.new(cnpj).formatted if cnpj.present?
   end
 end
+        
