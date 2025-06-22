@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   skip_before_action :authenticate_request, only: [:create]
   before_action :find_users, only: :index
   before_action :find_entity, except: %i[index create create_collaborator]
-  before_action :verify_user, except: %i[create]
+  before_action :verify_user, except: %i[create update]
 
   def index
     render json: @library_users
@@ -32,10 +32,12 @@ class UsersController < ApplicationController
   def create_collaborator
 
     ActiveRecord::Base.transaction do
+      address = Address.create!(users_params[:address])
+
       @collaborator = User.new(users_params.except(:address))
       @collaborator.type_user_id = 2
       @collaborator.library_id = @current_library.id
-      @collaborator.build_address(users_params[:address])
+      @collaborator.address_id = address.id
 
       @collaborator.save!
     end
@@ -49,28 +51,27 @@ class UsersController < ApplicationController
   end
 
   def update
-    user_update = User.find_by(id: users_params[:id])
-    if @current_user.type_user_id != 1 && user_update&.type_user_id != @current_user.type_user_id
+    if @current_user.type_user_id != 1 && params[:id].to_i != @current_user.id
       render json: { error: 'unpermitted action' }, status: :forbidden
       return
     end
 
     begin
       ActiveRecord::Base.transaction do
-        @user.update!(users_params.except(:address))
+        @user.update!(users_params.except(:address, :type_user_id))
 
-        unless @user.type_user_id = 3 
+        unless @user.type_user_id == 3 
           address = users_params[:address]
           @user.address.update!({
                                   country: address[:country],
                                   state: address[:state],
                                   city: address[:city],
-                                  zipcod: address[:zipcode],
+                                  zipcode: address[:zipcode],
                                   district: address[:district],
                                   street: address[:street],
                                   number: address[:number],
                                   complement: address[:complement]
-                              })
+                               })
         end
       end
 

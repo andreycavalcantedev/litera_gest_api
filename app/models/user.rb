@@ -3,8 +3,7 @@ require 'cpf_cnpj'
 class User < ApplicationRecord
   has_secure_password
 
-  has_one :address, dependent: :destroy
-  accepts_nested_attributes_for :address
+  belongs_to :address, optional: true
 
   belongs_to :library, optional: true
 
