@@ -3,7 +3,8 @@ class UsersController < ApplicationController
   skip_before_action :authenticate_request, only: [:create]
   before_action :find_users, only: :index
   before_action :find_entity, except: %i[index create create_collaborator]
-  before_action :verify_user, except: %i[create update]
+  before_action :verify_user, except: %i[index create]
+  before_action :verify_admin, only: %i[index create_collaborator]
 
   def index
     render json: @library_users
@@ -30,12 +31,10 @@ class UsersController < ApplicationController
   end
 
   def create_collaborator
-
     ActiveRecord::Base.transaction do
       address = Address.create!(users_params[:address])
 
       @collaborator = User.new(users_params.except(:address))
-      @collaborator.type_user_id = 2
       @collaborator.library_id = @current_library.id
       @collaborator.address_id = address.id
 
@@ -51,11 +50,6 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @current_user.type_user_id != 1 && params[:id].to_i != @current_user.id
-      render json: { error: 'unpermitted action' }, status: :forbidden
-      return
-    end
-
     begin
       ActiveRecord::Base.transaction do
         @user.update!(users_params.except(:address, :type_user_id))
@@ -104,7 +98,13 @@ class UsersController < ApplicationController
   end
 
   def verify_user
-    return render json: { error: 'Unauthorized action!' }, status: :unauthorized if @current_user.type_user_id == 3
+    return render json: { error: 'Unauthorized action' }, status: :unauthorized if @current_user.type_user_id != 1 && params[:id].to_i != @current_user.id
+  end
+
+  def verify_admin
+    if @current_user.type_user_id != 1
+      return render json: { error: 'Unauthorized action' }
+    end
   end
 
   def users_params

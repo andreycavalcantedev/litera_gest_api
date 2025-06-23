@@ -1,4 +1,4 @@
 class Address < ApplicationRecord
   has_one :user
-  belongs_to :library, optional: true
+  has_one :library
 end
