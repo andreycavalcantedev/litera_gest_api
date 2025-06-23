@@ -3,7 +3,7 @@ require 'cpf_cnpj'
 class Library < ApplicationRecord
   has_many :users
 
-  has_one :address
+  belongs_to :address, optional: true
                                                                                                                              
   before_save :cnpj_formatted                                                                                                                                                                                                               
 
@@ -21,4 +21,3 @@ class Library < ApplicationRecord
     self.cnpj = CNPJ.new(cnpj).formatted if cnpj.present?
   end
 end
-        
