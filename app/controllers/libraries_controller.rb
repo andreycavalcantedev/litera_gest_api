@@ -44,11 +44,17 @@ class LibrariesController < ApplicationController
   end
 
   def update
-    if @library.update(library_params)
-      render json: @library
-    else
-      render json: @library.errors, status: :unprocessable_entity
+    ActiveRecord::Base.transaction do 
+      @library.update!(library_params.except(:address))
+
+      if @library.address.present?
+        @library.address.update!(library_params[:address])
+      end
     end
+
+    render json: @library.as_json(include: :address)
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def destroy    
