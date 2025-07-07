@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     post :create_collaborator, on: :collection
   end
   resources :libraries
+  resources :books
 
   post '/login', to: 'auth#login'
   delete '/logout', to: 'auth#logout'
