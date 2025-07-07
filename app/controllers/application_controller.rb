@@ -20,16 +20,14 @@ class ApplicationController < ActionController::API
     if decoded
       @current_user = User.find_by(id: decoded[:user_id])
       if @current_user && @current_user&.type_user_id.present?
-        unless @current_user[:type_user_id] == 3
-          @current_library = Library.find_by(id: @current_user.library_id)
-        end
+        @current_library = Library.find_by(id: @current_user.library_id)
       end
     end
 
     if BlackListedToken.exists?(token: header)
-      return render json: { errors: 'Token Invàlido' }, status: :unauthorized
+      return render json: { errors: 'Invalid token' }, status: :unauthorized
     end
 
-    return render json: { error: 'Não autorizado' }, status: :unauthorized unless  @current_user
+    return render json: { error: 'Unauthorized' }, status: :unauthorized unless  @current_user
   end
 end

@@ -116,7 +116,7 @@ class UsersController < ApplicationController
         :country, :state, :city,
         :zipcode, :district, :street,
         :number, :complement
-      ]
+      ], author: 
     )
   end
 end
