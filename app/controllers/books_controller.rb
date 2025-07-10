@@ -5,6 +5,18 @@ class BooksController < ApplicationController
   before_action :verify_user, except: %i[index show]
   
   def index
+    if params[:title].present?
+      @library_books = @library_books.search_by_title(params[:title])
+    end
+
+    if params[:author].present?
+      @library_books = @library_books.search_by_author(params[:author])
+    end
+
+    if params[:publisher_name].present?
+      @library_books = @library_books.search_by_publisher(params[:publisher_name])
+    end
+
     render json: @library_books
   end
 
