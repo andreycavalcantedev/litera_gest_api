@@ -59,6 +59,34 @@ class BooksController < ApplicationController
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
+  def loan_book
+    return render json: { error: 'book sold out' }, status: :unprocessable_entity if @entity.quantity == 0
+
+    user = User.find_by(accession_number: book_params[:accession_number])
+    return render json: { error: 'user not found' }, status: :unprocessable_entity unless user.present?
+  
+    return render json: { error: 'loan exists' }, status: :unprocessable_entity if BookUser.exists?( book_id: @entity.id, user_id: user.id )
+    
+    begin
+      book_user = @entity.book_users.create!({
+                                                book_id: @entity.id,
+                                                user_id: user.id,
+                                                date_reservation: Date.current,
+                                                date_devolution:  Date.current + 15.days,
+                                                accession_number: book_params[:accession_number]                   
+                                            })
+
+      @entity.update!({ quantity: @entity.quantity - 1 }) if book_user.present?
+
+      render json: {
+        user: book_user.user,
+        book: book_user.book
+      }, status: :ok
+    rescue => e
+      render json: { errors: e.message }, status: :unprocessable_entity
+    end
+  end
+
   def update
     ActiveRecord::Base.transaction do 
       if book_params[:author_id] == @entity.author_id
@@ -102,6 +130,7 @@ class BooksController < ApplicationController
       :year_published, :gender, :isbn,
       :total_quantity, :quantity, 
       :author_id, :publisher_id,
+      :accession_number,
       publisher: [
         :name, :cnpj,
         :phone, :email, 

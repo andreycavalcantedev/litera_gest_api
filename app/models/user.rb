@@ -3,9 +3,14 @@ require 'cpf_cnpj'
 class User < ApplicationRecord
   has_secure_password
 
-  belongs_to :address, optional: true
+  has_many :book_users, dependent: :destroy
+  has_many :books, through: :book_users
+
+  belongs_to :address, optional: true, dependent: :destroy
 
   belongs_to :library, optional: true
+
+  before_create :generate_accession_number
 
   validates :email, presence: true, uniqueness: true
   validates :password_digest, length: { minimum: 6 }
@@ -30,5 +35,12 @@ class User < ApplicationRecord
 
   def cpf_formated
     self.cpf = CPF.new(cpf).formatted if CPF.valid?(cpf)
+  end
+
+  def generate_accession_number
+    loop do
+      self.accession_number = "#{Time.current.strftime("%y%m%d%H%M%S")}#{rand(0..9)}"
+      break unless User.exists?(accession_number: accession_number)
+    end
   end
 end
