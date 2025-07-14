@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_07_163007) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_14_012732) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -51,6 +51,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_07_163007) do
     t.datetime "date_devolution"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "accession_number"
     t.index ["book_id"], name: "index_book_users_on_book_id"
     t.index ["user_id"], name: "index_book_users_on_user_id"
   end
@@ -115,6 +116,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_07_163007) do
     t.bigint "library_id"
     t.string "password_digest"
     t.bigint "address_id"
+    t.string "accession_number"
+    t.index ["accession_number"], name: "index_users_on_accession_number", unique: true
     t.index ["address_id"], name: "index_users_on_address_id"
     t.index ["library_id"], name: "index_users_on_library_id"
     t.index ["type_user_id"], name: "index_users_on_type_user_id"

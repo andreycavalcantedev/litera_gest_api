@@ -2,6 +2,9 @@ class Book < ApplicationRecord
   belongs_to :author, optional: true
   belongs_to :publisher, optional: true
 
+  has_many :book_users, dependent: :destroy
+  has_many :users, through: :book_users
+
   scope :by_library, ->(library_id) { where(library_id: library_id) }
   scope :search_by_title, ->(title) {
     where(
