@@ -1,0 +1,11 @@
+<h1>Comprovante de Empréstimo</h1>
+<p><%= @user.name %></p>
+
+<p>Você realizou o empréstimo do livro: <strong><%= @book.title %></strong><p>
+
+<p>
+    Data do empréstimo: <%= @book_user.date_reservation.strftime("%d/%m/%Y") %><br>
+    Data da devolução: <%= @book_user.date_devolution.strftime("%d/%m/%Y") %><br>
+</p>
+
+<p>Obrigado por utilizar nossa biblioteca!!<p>

@@ -78,6 +78,8 @@ class BooksController < ApplicationController
 
       @entity.update!({ quantity: @entity.quantity - 1 }) if book_user.present?
 
+      LoanMailer.loan_confirmation(book_user).deliver_now
+      
       render json: {
         user: book_user.user,
         book: book_user.book
