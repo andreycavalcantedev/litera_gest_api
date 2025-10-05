@@ -73,7 +73,8 @@ class BooksController < ApplicationController
                                                 user_id: user.id,
                                                 date_reservation: Date.current,
                                                 date_devolution:  Date.current + 15.days,
-                                                accession_number: book_params[:accession_number]                   
+                                                accession_number: book_params[:accession_number],
+                                                book_code: book_params[:book_code]                
                                             })
 
       @entity.update!({ quantity: @entity.quantity - 1 }) if book_user.present?
@@ -132,7 +133,7 @@ class BooksController < ApplicationController
       :year_published, :gender, :isbn,
       :total_quantity, :quantity, 
       :author_id, :publisher_id,
-      :accession_number,
+      :accession_number, :book_code,
       publisher: [
         :name, :cnpj,
         :phone, :email, 
